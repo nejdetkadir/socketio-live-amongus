@@ -11,8 +11,8 @@ app.controller('indexController', ['$scope', 'indexFactory', ($scope, indexFacto
   };
 
   function initSocket(username) {
-    const url = 'https://socketio-live-amongus.herokuapp.com'; // live
-    //const url = 'http://localhost:3000'; // development
+    //const url = 'https://socketio-live-amongus.herokuapp.com'; // live
+    const url = 'http://localhost:3000'; // development
     indexFactory.connectSocket(url, {
       reconnectionAttempts: 3,
       reconnectionDelay: 600
@@ -51,6 +51,19 @@ app.controller('indexController', ['$scope', 'indexFactory', ($scope, indexFacto
         $scope.messages.push(messageData);
         $scope.$apply();
       });
+
+      let animate = false;
+      $scope.onClickPlayer = ($event) => {
+        if (!animate) {
+          animate=true;
+          $('#'+socket.id).animate({
+            'left': $event.offsetX,
+            'top': $event.offsetY,
+          }, () => {
+            animate = false;
+          });
+        }
+      };
     }).catch((err) => {
       console.log(err);
     });
