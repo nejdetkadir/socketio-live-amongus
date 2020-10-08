@@ -1,7 +1,6 @@
 app.controller('indexController', ['$scope', 'indexFactory', ($scope, indexFactory) => {
 
   $scope.messages = [];
-
   $scope.init = () => {
     const username = prompt('Please enter your username');
     if (username)
@@ -21,9 +20,26 @@ app.controller('indexController', ['$scope', 'indexFactory', ($scope, indexFacto
       socket.emit('newUser', {
         username
       });
+
       socket.on('newUser', (data) => {
         const messageData = {
-          type: 0, //info, this mean message sent from server
+          type: {
+            code: 0, //info, this mean message sent from server
+            message: 1
+          },
+          username: data.username
+        };
+        $scope.messages.push(messageData);
+        $scope.$apply();
+      });
+
+      socket.on('disUser', (data) => {
+        console.log(data);
+        const messageData = {
+          type: {
+            code: 0,
+            message: 0
+          },
           username: data.username
         };
         $scope.messages.push(messageData);
