@@ -11,8 +11,8 @@ app.controller('indexController', ['$scope', 'indexFactory', ($scope, indexFacto
   };
 
   function initSocket(username) {
-    //const url = 'https://socketio-live-amongus.herokuapp.com'; // live
-    const url = 'http://localhost:3000'; // development
+    const url = 'https://socketio-live-amongus.herokuapp.com'; // live
+    //const url = 'http://localhost:3000'; // development
     indexFactory.connectSocket(url, {
       reconnectionAttempts: 3,
       reconnectionDelay: 600
@@ -36,11 +36,12 @@ app.controller('indexController', ['$scope', 'indexFactory', ($scope, indexFacto
           username: data.username
         };
         $scope.messages.push(messageData);
+        $scope.players[data.id] = data;
         $scope.$apply();
       });
 
       socket.on('disUser', (data) => {
-        console.log(data);
+        //console.log(data);
         const messageData = {
           type: {
             code: 0,
@@ -49,16 +50,30 @@ app.controller('indexController', ['$scope', 'indexFactory', ($scope, indexFacto
           username: data.username
         };
         $scope.messages.push(messageData);
+        delete $scope.players[data.id];
         $scope.$apply();
+      });
+
+      socket.on('animate', (data) => {
+        $('#'+data.socketId).animate({
+          'left': data.x,
+          'top': data.y,
+        }, () => {
+          animate = false;
+        });
       });
 
       let animate = false;
       $scope.onClickPlayer = ($event) => {
+        let x = $event.offsetX;
+        let y = $event.offsetY;
+        socket.emit('animate', {x, y});
+
         if (!animate) {
           animate=true;
           $('#'+socket.id).animate({
-            'left': $event.offsetX,
-            'top': $event.offsetY,
+            'left': x,
+            'top': y,
           }, () => {
             animate = false;
           });
