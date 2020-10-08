@@ -1,3 +1,3 @@
 app.controller('indexController', ['$scope', ($scope) => {
-  console.log('hey');
+  const socket = io.connect('https://socketio-live-amongus.herokuapp.com/');
 }]);
