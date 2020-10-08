@@ -36,6 +36,12 @@ body{
 .orange {
   background-image: url('/images/player-orange.png');
 }
+.black {
+  background-image: url('/images/player-black.png');
+}
+.yellow {
+  background-image: url('/images/player-yellow.png');
+}
 
 .circle .relative{
   position: relative;
