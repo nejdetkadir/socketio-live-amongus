@@ -16,6 +16,13 @@ app.controller('indexController', ['$scope', 'indexFactory', ($scope, indexFacto
       element.scrollTop = element.scrollHeight;
     });
   }
+  
+  function showBubble(id, message) {
+    $('#' + id).find('.message').show().html(message);
+    setTimeout(() => {
+      $('#' + id).find('.message').hide();
+    }, 2000);
+  }
 
   function initSocket(username) {
     const url = 'https://socketio-live-amongus.herokuapp.com'; // live
@@ -75,6 +82,7 @@ app.controller('indexController', ['$scope', 'indexFactory', ($scope, indexFacto
       socket.on('newMessage', (data) => {
         $scope.messages.push(data);
         $scope.$apply();
+        showBubble(data.socketId, data.text);
         scrollTop();
       });
 
@@ -108,6 +116,7 @@ app.controller('indexController', ['$scope', 'indexFactory', ($scope, indexFacto
         $scope.message = '';
 
         socket.emit('newMessage', messageData);
+        showBubble(socket.id, message);
         scrollTop();
       };
 
