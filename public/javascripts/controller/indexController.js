@@ -27,7 +27,6 @@ app.controller('indexController', ['$scope', 'indexFactory', ($scope, indexFacto
   async function initSocket(username) {
     try {
       const url = 'https://socketio-live-amongus.herokuapp.com'; // live
-      //const url = 'http://localhost:3000'; // development
       const socket = await indexFactory.connectSocket(url, {
         reconnectionAttempts: 3,
         reconnectionDelay: 600
