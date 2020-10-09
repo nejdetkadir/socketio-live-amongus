@@ -9,10 +9,17 @@ app.controller('indexController', ['$scope', 'indexFactory', ($scope, indexFacto
     else
       return false;
   };
+  
+  function scrollTop() {
+    setTimeout(() => {
+      const element = document.getElementById('chat-area');
+      element.scrollTop = element.scrollHeight;
+    });
+  }
 
   function initSocket(username) {
-    //const url = 'https://socketio-live-amongus.herokuapp.com'; // live
-    const url = 'http://localhost:3000'; // development
+    const url = 'https://socketio-live-amongus.herokuapp.com'; // live
+    //const url = 'http://localhost:3000'; // development
     indexFactory.connectSocket(url, {
       reconnectionAttempts: 3,
       reconnectionDelay: 600
@@ -38,6 +45,7 @@ app.controller('indexController', ['$scope', 'indexFactory', ($scope, indexFacto
         $scope.messages.push(messageData);
         $scope.players[data.id] = data;
         $scope.$apply();
+        scrollTop();
       });
 
       socket.on('disUser', (data) => {
@@ -52,6 +60,7 @@ app.controller('indexController', ['$scope', 'indexFactory', ($scope, indexFacto
         $scope.messages.push(messageData);
         delete $scope.players[data.id];
         $scope.$apply();
+        scrollTop();
       });
 
       socket.on('animate', (data) => {
@@ -61,6 +70,12 @@ app.controller('indexController', ['$scope', 'indexFactory', ($scope, indexFacto
         }, () => {
           animate = false;
         });
+      });
+
+      socket.on('newMessage', (data) => {
+        $scope.messages.push(data);
+        $scope.$apply();
+        scrollTop();
       });
 
       let animate = false;
@@ -79,6 +94,23 @@ app.controller('indexController', ['$scope', 'indexFactory', ($scope, indexFacto
           });
         }
       };
+
+      $scope.newMessage = () => {
+        let message = $scope.message;
+        const messageData = {
+          type: {
+            code: 1, //user message, this mean message sent from any player
+          },
+          username: username,
+          text: message
+        };
+        $scope.messages.push(messageData);
+        $scope.message = '';
+
+        socket.emit('newMessage', messageData);
+        scrollTop();
+      };
+
     }).catch((err) => {
       console.log(err);
     });
