@@ -24,13 +24,14 @@ app.controller('indexController', ['$scope', 'indexFactory', ($scope, indexFacto
     }, 2000);
   }
 
-  function initSocket(username) {
-    const url = 'https://socketio-live-amongus.herokuapp.com'; // live
-    //const url = 'http://localhost:3000'; // development
-    indexFactory.connectSocket(url, {
-      reconnectionAttempts: 3,
-      reconnectionDelay: 600
-    }).then((socket) => {
+  async function initSocket(username) {
+    try {
+      const url = 'https://socketio-live-amongus.herokuapp.com'; // live
+      //const url = 'http://localhost:3000'; // development
+      const socket = await indexFactory.connectSocket(url, {
+        reconnectionAttempts: 3,
+        reconnectionDelay: 600
+      });
       //console.log('connection successfully', socket);
       socket.emit('newUser', {
         username
@@ -71,7 +72,7 @@ app.controller('indexController', ['$scope', 'indexFactory', ($scope, indexFacto
       });
 
       socket.on('animate', (data) => {
-        $('#'+data.socketId).animate({
+        $('#' + data.socketId).animate({
           'left': data.x,
           'top': data.y,
         }, () => {
@@ -93,8 +94,8 @@ app.controller('indexController', ['$scope', 'indexFactory', ($scope, indexFacto
         socket.emit('animate', {x, y});
 
         if (!animate) {
-          animate=true;
-          $('#'+socket.id).animate({
+          animate = true;
+          $('#' + socket.id).animate({
             'left': x,
             'top': y,
           }, () => {
@@ -119,9 +120,8 @@ app.controller('indexController', ['$scope', 'indexFactory', ($scope, indexFacto
         showBubble(socket.id, message);
         scrollTop();
       };
-
-    }).catch((err) => {
-      console.log(err);
-    });
+    } catch(e) {
+      console.log(e);
+    }
   }
 }]);
